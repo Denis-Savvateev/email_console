@@ -1,0 +1,21 @@
+"""
+Файл с чувствительными данными - настройкой почтовых ящиков!
+Храните его в надежном месте!
+"""
+
+NUMBER_OF_LETTERS: int = 20
+"""Количество последних писем в выборке."""
+
+EMAIL_DATA = [
+    {
+        'server': 'imap.mail.ru',
+        'username': 'my_name',
+        'password': 'pAsSwOrD',
+    },
+    {
+        'server': 'imap.mail.ru',
+        'username': 'my_name2',
+        'password': 'pAsSwOrD2',
+    },
+]
+"""Данные для входа в запись почты."""
