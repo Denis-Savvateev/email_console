@@ -1,6 +1,8 @@
 import datetime as dt
 import email
+from email import policy
 from email.header import decode_header
+from email.message import EmailMessage
 import imaplib
 from itertools import islice
 # import base64
@@ -19,14 +21,15 @@ def get_mail(server, username, password, number_of_letters):
     all_msg = (imap.uid('search', 'ALL')[1][0].split())
     for idx in islice(reversed(all_msg), number_of_letters):
         _, raw_msg = imap.uid('fetch', idx, '(RFC822)')
-        msg = email.message_from_bytes(raw_msg[0][1])
+        msg: EmailMessage = email.message_from_bytes(raw_msg[0][1], policy=policy.default)
         letter_date = dt.datetime(*email.utils.parsedate_tz(msg["Date"])[:5])
         if type(decode_header(msg['From'])[0][0]) is bytes:
             letter_from = decode_header(msg['From'])[0][0].decode()
         else:
             letter_from = msg['From']
+        content = msg.get_body().get_content()
         letter_ret_path = msg['Return-path']
-        header = decode_header(msg["Subject"])[0][0].decode()
+        header = decode_header(msg["Subject"])[0][0]
         print(
             f'Время письма: {letter_date.strftime("%d.%m.%Y %H:%M:%S")}, '
             f'Получено от {letter_from}, Обратный адрес: {letter_ret_path}, '
@@ -34,6 +37,9 @@ def get_mail(server, username, password, number_of_letters):
         )
         if idx in unseen_msgs:
             imap.uid('STORE', idx, '-FLAGS', '(\Seen)')  # W605
+        # read_mesage = input('Вывести текст письма? 1 - да')
+        # if read_mesage == '1':
+        #     payload = msg.get_payload()
 
 
 def main():
