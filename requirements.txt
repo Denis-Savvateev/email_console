@@ -1,1 +1,2 @@
-beautifulsoup4==4.12.3
+html2text==2024.2.26
+prettytable==3.12.0
