@@ -4,11 +4,13 @@
 
 NUMBER_OF_LETTERS: int = 5
 """Количество последних писем в выборке."""
-TABLE_MAX_WIGHT = 120
+TABLE_MAX_WIGHT: int = 120
 """Максимальная ширина таблицы."""
-FIELD_MIN_WIGHT = 15
+FIELD_MIN_WIGHT: int = 15
 """Минимальная ширина поля таблицы."""
-FIELD_MAX_WIGHT = 60
+FIELD_MAX_WIGHT: int = 60
 """Максимальная ширина поля таблицы."""
-INCLUDE_TEXT = True
-"""Включать текст в таблицу"""
+INCLUDE_TEXT: bool = True
+"""Включать текст в таблицу."""
+DEFAULT_BOX: str = 'INBOX'
+"""Почтовый ящик по-умолчанию."""
