@@ -1,2 +1,2 @@
-html2text==2024.2.26
+beautifulsoup4==4.12.3
 prettytable==3.12.0

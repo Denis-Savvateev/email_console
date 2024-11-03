@@ -1,30 +1,21 @@
-import base64
+from bs4 import BeautifulSoup
 import datetime as dt
 import email
 from email import policy
 from email.header import decode_header
 from email.message import EmailMessage
-import html2text
 import imaplib
 from itertools import islice
 from prettytable import PrettyTable, HRuleStyle
 
-from config import EMAIL_DATA, NUMBER_OF_LETTERS
-
-TABLE_MAX_WIGHT = 160
-"""Максимальная ширина таблицы."""
-FIELD_MIN_WIGHT = 15
-"""Минимальная ширина поля таблицы."""
-FIELD_MAX_WIGHT = 100
-"""Максимальная ширина поля таблицы."""
-INCLUDE_TEXT = True
-"""Включать текст в таблицу"""
-
-TEXT_MAKER = html2text.HTML2Text()
-TEXT_MAKER.ignore_links = True
-TEXT_MAKER.ignore_tables = True
-TEXT_MAKER.body_width = 0
-TEXT_MAKER.single_line_break = True
+from accounts import EMAIL_DATA
+from config import (
+    NUMBER_OF_LETTERS,
+    TABLE_MAX_WIGHT,
+    FIELD_MIN_WIGHT,
+    FIELD_MAX_WIGHT,
+    INCLUDE_TEXT
+)
 
 
 def get_mail(server, username, password, number_of_letters):
@@ -57,10 +48,14 @@ def get_mail(server, username, password, number_of_letters):
             letter_from = msg['From']
         for part in msg.walk():
             if part.get_content_type() == 'text/html':
-                text = TEXT_MAKER.handle(part.get_content())
+                # text = TEXT_MAKER.handle(part.get_content())
+                soup = BeautifulSoup(part.get_content(), 'html.parser')
+                text = soup.get_text()
             elif part.get_content_type() == 'text/plain':
                 text = part.get_content()
-        text = text.replace('\n', '  ').replace('\r', '  ')
+                break
+        text = text.replace('\n', ' ').replace(
+            '\r', ' ').replace('\t', ' ').replace('   ', ' ')
         letter_ret_path = msg['Return-path']
         header = decode_header(msg["Subject"])[0][0]
         row = [
@@ -74,9 +69,6 @@ def get_mail(server, username, password, number_of_letters):
         table.add_row(row)
         if idx in unseen_msgs:
             imap.uid('STORE', idx, '-FLAGS', '(\Seen)')  # W605
-        # read_mesage = input('Вывести текст письма? 1 - да')
-        # if read_mesage == '1':
-        #     payload = msg.get_payload()
     print(table)
     print('')
 
