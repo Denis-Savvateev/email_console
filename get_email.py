@@ -41,11 +41,11 @@ def get_message_details(imap: imaplib.IMAP4_SSL, idx: bytes):
     )
     letter_date = dt.datetime(*email.utils.parsedate_tz(msg["Date"])[:5])
     if type(decode_header(msg['From'])[0][0]) is bytes:
-        letter_from: str = decode_header(msg['From'])[0][0].decode()
+        letter_from: str = str(decode_header(msg['From'])[0][0].decode())
     else:
-        letter_from: str = msg['From']
-    letter_ret_path: str = msg['Return-path']
-    header: str = decode_header(msg["Subject"])[0][0]
+        letter_from: str = str(msg['From'])
+    letter_ret_path: str = str(msg['Return-path']).strip('<>')
+    header: str = str(decode_header(msg["Subject"])[0][0])
     for part in msg.walk():
         if part.get_content_type() == 'text/html':
             soup = BeautifulSoup(part.get_content(), 'html.parser')
